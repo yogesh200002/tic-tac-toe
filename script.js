@@ -5,6 +5,11 @@ const gameboard = (() => {
     const selection = document.querySelector('.selection');
     const display = document.querySelector('.playerDisplay > h2');
     let winCheck = false;
+    let player1 = 'player1';
+    let player2;
+    let currentPlayer;
+    const restartbtn = document.querySelector('#restart')
+    restartbtn.style.display = 'none'
     function createBoard(){
         for (let index = 0; index <= 8; index++) {
             let cell = document.createElement('div');
@@ -18,19 +23,23 @@ const gameboard = (() => {
         playerButton.addEventListener('click', () => {
             selection.style.display = 'none';
             container.style.display = 'grid';
-            playBoard('player1','player2');
+            restartbtn.style.display = 'block'
+            player2 = 'player2'
+            playBoard(player1,player2);
             display.textContent = 'Player X Turn';
         });
         botButton.addEventListener('click', () => {
             selection.style.display = 'none';
             container.style.display = 'grid';
-            playBoard('player1','bot');
+            restartbtn.style.display = 'block'
+            player2 = 'bot'
+            playBoard(player1,player2);
             display.textContent = 'Player X Turn';
         });
     }
     function playBoard(player1,player2){
         const cells = document.querySelectorAll('.cells');
-        let currentPlayer = player1;
+        currentPlayer = player1;
         cells.forEach(cell => {
             if(player2 !== 'bot'){
                 cell.addEventListener('click', function(){
@@ -52,7 +61,7 @@ const gameboard = (() => {
             }
             else{
                 cell.addEventListener('click', function(){
-                    if(currentPlayer === player1 && this.textContent === ''){
+                    if(currentPlayer === player1 && this.textContent === '' && winCheck === false){
                         console.log(currentPlayer)
                         cell.textContent = 'X';
                         currentPlayer = player2;
@@ -61,11 +70,11 @@ const gameboard = (() => {
                         setTimeout( () => {
                             if(winCheck != true){
                                 botPlay(currentPlayer,player1);
-                                gameValidation(player1,player2);
                                 display.textContent = 'Player X Turn';
+                                gameValidation(player1,player2);
                                 playBoard(player1,player2);
                             }
-                        },1000);
+                        },250);
                     }
                 })
             }
@@ -107,25 +116,35 @@ const gameboard = (() => {
             const secondElement = cells[winningConditions[index][1]];
             const thirdElement = cells[winningConditions[index][2]];
             if(firstElement.textContent === secondElement.textContent && secondElement.textContent === thirdElement.textContent && firstElement.textContent !== ''){
-                if(firstElement.textContent === 'X'){
+                if(firstElement.textContent === 'X' || firstElement.textContent === 'X' && Array.from(cells).every(cell => cell.textContent !== '') == true){
                     console.log(player1+'wins!');
                     winCheck = true;
-                    display.textContent = player1+' Wins!';
+                    display.textContent = 'Player X Wins!';
                 }
-                else if(firstElement.textContent === 'O'){
+                else if(firstElement.textContent === 'O' || firstElement.textContent === 'O' && Array.from(cells).every(cell => cell.textContent !== '') == true){
                     console.log(player2+'wins!');
                     winCheck = true;
-                    display.textContent = player2+'wins!';
+                    display.textContent = 'Player O wins!';
                 }
             }
-            else if(winCheck == false && Array.from(cells).every(cell => cell.textContent !== '')){
-                console.log('tie');
-                winCheck = true;
-                display.textContent = 'Tie!';
-                break;
+            else if(firstElement.textContent != secondElement.textContent && secondElement.textContent != thirdElement.textContent && firstElement.textContent !== '' && Array.from(cells).every(cell => cell.textContent != '') == true && winCheck == false){
+                console.log('Tie')
+                winCheck = true
+                display.textContent = "It's a Tie"
             }
         }
     }
+    function restartPlay(){
+        const cells = document.querySelectorAll('.cells');
+        cells.forEach(cell => {
+            cell.textContent = ''
+        })
+        display.textContent = 'Player X Turn';
+        winCheck = false
+        currentPlayer = player1
+        playBoard(player1,player2)
+    }
+    restartbtn.addEventListener('click',restartPlay)
     return {
         createBoard,
         playBoard,
