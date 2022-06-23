@@ -1,7 +1,6 @@
 const gameboard = (() => {
     const board = document.querySelector('.grid');
     const container = document.querySelector('.container')
-    container.style.display = 'none';
     const selection = document.querySelector('.selection');
     const display = document.querySelector('.playerDisplay > h2');
     let winCheck = false;
@@ -22,7 +21,7 @@ const gameboard = (() => {
         const botButton = document.querySelector('#botButton');
         playerButton.addEventListener('click', () => {
             selection.style.display = 'none';
-            container.style.display = 'grid';
+            container.style.display = 'flex';
             restartbtn.style.display = 'block'
             player2 = 'player2'
             playBoard(player1,player2);
@@ -119,11 +118,17 @@ const gameboard = (() => {
                 if(firstElement.textContent === 'X' || firstElement.textContent === 'X' && Array.from(cells).every(cell => cell.textContent !== '') == true){
                     console.log(player1+'wins!');
                     winCheck = true;
+                    firstElement.style.backgroundColor = 'aqua'
+                    secondElement.style.backgroundColor = 'aqua'
+                    thirdElement.style.backgroundColor = 'aqua'
                     display.textContent = 'Player X Wins!';
                 }
                 else if(firstElement.textContent === 'O' || firstElement.textContent === 'O' && Array.from(cells).every(cell => cell.textContent !== '') == true){
                     console.log(player2+'wins!');
                     winCheck = true;
+                    firstElement.style.backgroundColor = 'aqua'
+                    secondElement.style.backgroundColor = 'aqua'
+                    thirdElement.style.backgroundColor = 'aqua'
                     display.textContent = 'Player O wins!';
                 }
             }
@@ -138,6 +143,7 @@ const gameboard = (() => {
         const cells = document.querySelectorAll('.cells');
         cells.forEach(cell => {
             cell.textContent = ''
+            cell.style.backgroundColor = 'white'
         })
         display.textContent = 'Player X Turn';
         winCheck = false
@@ -147,8 +153,6 @@ const gameboard = (() => {
     restartbtn.addEventListener('click',restartPlay)
     return {
         createBoard,
-        playBoard,
-        gameValidation,
         choiceSelection
     }
 })();
